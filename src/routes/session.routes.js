@@ -23,10 +23,13 @@ sessionRouter.post(
         age: req.user.age,
         email: req.user.email,
       };
-      const userWithoutPassword = req.user.toObject();
-      delete userWithoutPassword.password;
 
-      res.status(200).send({ payload: userWithoutPassword });
+      const token = generateToken(req.user);
+      res.cookie("jwtCookie", token, {
+        maxAge: 43200000,
+      });
+
+      res.status(200).send({ payload: req.user });
     } catch (error) {
       return res
         .status(500)
@@ -91,7 +94,8 @@ sessionRouter.get("/logout", async (req, res) => {
   if (req.session.login) {
     req.session.destroy();
   }
-  res.json({ res: "ok" });
+  res.clearCookie("jwtCookie");
+  res.status(200).send({ resultado: "Usuario deslogueado" });
 });
 
 sessionRouter.get(
