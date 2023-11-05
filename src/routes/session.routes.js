@@ -1,6 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import { passportError, authorization } from "../utils/messagesError.js";
+import { generateToken } from "../utils/jwt.js";
 const sessionRouter = Router();
 
 sessionRouter.get("/login", async (req, res) => {
