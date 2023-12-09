@@ -35,12 +35,21 @@ const purchase = async (req, res) => {
         }
       }
 
-      const ticketPurchaser = await ticketModel.create({
-        amount: amount,
-        purchaser: purchaser,
-      });
-      res.json(ticketPurchaser);
-
+      try {
+        const ticketPurchaser = await ticketModel.create({
+          amount: amount,
+          purchaser: purchaser,
+        });
+        res.json(ticketPurchaser);
+        fetch("http://localhost:8080/mail", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(ticketPurchaser),
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).send("Ocurrió un error al procesar la solicitud");
+      }
       await cartManager.emptyCart(cid);
     }
   } catch (error) {

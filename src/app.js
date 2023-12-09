@@ -115,18 +115,27 @@ app.use("/", viewRouter);
 app.use("/api/users", userRouter);
 app.use("/api/sessions", sessionRouter);
 
-app.get("/mail", async (req, res) => {
-  await transporter.sendMail({
-    from: "TEST MAIL profematetoledo2@gmail.com",
-    to: "iastapenco@gmail.com",
-    subject: "Hola, buenas tardes",
-    html: `
-      <div>
-      <h1>Buenas tardes</h1>
-      </div>
-    `,
-  });
-  res.send("Email enviado");
+app.post("/mail", async (req, res) => {
+  try {
+    const { purchaser, amount, code, purchase_datatime } = req.body;
+    await transporter.sendMail({
+      from: "TEST MAIL profematetoledo2@gmail.com",
+      to: `${purchaser}`,
+      subject: "Confirmación de Compra",
+      html: `
+        <div>
+        <h1>Buenas tardes, le confirmamos su compra</h1>
+        <h2>Monto total: ${amount}</h2>
+        <h2>Código de su compra: ${code}</h2>
+        <h2>Fecha y hora: ${purchase_datatime}</h2>
+        </div>
+      `,
+    });
+    res.send("Email enviado");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Ocurrió un error al enviar el email");
+  }
 });
 
 app.post("/upload", upload.single("product"), (req, res) => {
