@@ -40,6 +40,8 @@ const purchase = async (req, res) => {
         purchaser: purchaser,
       });
       res.json(ticketPurchaser);
+
+      await cartManager.emptyCart(cid);
     }
   } catch (error) {
     console.log(error);
