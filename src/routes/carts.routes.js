@@ -1,6 +1,7 @@
 import { Router } from "express";
 import CartManager from "../dao/managers_mongo/cartManagerMongo.js";
 import { passportError, authorization } from "../utils/messagesError.js";
+import purchase from "../utils/purchaseController.js";
 
 const cartRouter = Router();
 const cartManager = new CartManager();
@@ -156,5 +157,12 @@ cartRouter.put("/:cid", async (req, res) => {
     res.status(500).send({ message: "error", respuesta: error });
   }
 });
+
+cartRouter.post(
+  "/:cid/purchase",
+  passportError("jwt"),
+  authorization("user"),
+  purchase
+);
 
 export default cartRouter;
